@@ -1,6 +1,6 @@
 // EnchantMenu v1 by RetoRuto9900K
 
-import { system, world, MinecraftEnchantmentTypes, Enchantment, EnchantmentList } from '@minecraft/server';
+import { MinecraftEnchantmentTypes, Enchantment, EnchantmentList, Player } from '@minecraft/server';
 import { ActionFormData } from '@minecraft/server-ui';
 import * as util from './util';
 import { enchantCost, enchantAddRate, ignores, enchantLevelRate } from './enchant_config';
@@ -24,6 +24,9 @@ const icons = {
 const enchantListMap = new Map();
 
 export class EnchantMenu {
+  /**
+   * @param {Player} player 
+   */
   constructor(player) {
     this.player = player;
     this.main().catch(e => console.error(e, e.stack));

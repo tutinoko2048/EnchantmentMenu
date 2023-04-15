@@ -1,0 +1,2 @@
+# EnchantmentMenu
+バニラのエンチャント台をFormで再現するScriptAPIのアドオンです

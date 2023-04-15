@@ -1,5 +1,6 @@
 # EnchantmentMenu
-バニラのエンチャント台をFormで再現するScriptAPIのアドオンです
+バニラのエンチャント台をFormで再現するScriptAPIのアドオンです  
+こんな感じ: https://twitter.com/tutinoko_kusaa/status/1642802449621872641
 
 ### 動作環境
 ```

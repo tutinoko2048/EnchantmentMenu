@@ -1,3 +1,4 @@
+// @ts-check
 import { system, Player } from '@minecraft/server';
 import { EnchantMenu } from './EnchantMenu/main';
 

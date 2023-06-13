@@ -1,12 +1,13 @@
 // EnchantMenu v1 by RetoRuto9900K
 
-import { MinecraftEnchantmentTypes, Enchantment, EnchantmentList, Player } from '@minecraft/server';
+import { Enchantment, EnchantmentList, ItemStack, Player } from '@minecraft/server';
 import { ActionFormData } from '@minecraft/server-ui';
 import * as util from './util';
 import { enchantCost, enchantAddRate, ignores, enchantLevelRate } from './enchant_config';
 import { getEnchantLang, getLevelLang } from './enchant_lang';
+import { MinecraftEnchantmentTypes } from './lib/MinecraftEnchantmentTypes';
 
-const EnchantmentTypes = () => Object.values(MinecraftEnchantmentTypes).filter(type => !ignores.includes(type.id)).slice();
+const EnchantmentTypes = () => Object.values(MinecraftEnchantmentTypes).filter(id => !ignores.includes(id)).slice();
 const sounds = {
   enchant: 'random.anvil_use',
   clear: 'block.stonecutter.use',
@@ -24,9 +25,7 @@ const icons = {
 const enchantListMap = new Map();
 
 export class EnchantMenu {
-  /**
-   * @param {Player} player 
-   */
+  /** @arg {Player} player */
   constructor(player) {
     this.player = player;
     this.main().catch(e => console.error(e, e.stack));
@@ -110,6 +109,7 @@ export class EnchantMenu {
     form.button('戻る', icons.back);
       
     const { canceled, selection } = await form.show(this.player);
+    if (canceled) return;
     if ([0, 1, 2].includes(selection)) { // 0 or 1 or 2
       const lv = selection + 1;
       if (!(await this.buyEnchant(lv, enchants[lv]))) return this.player.playSound(sounds.error);// button[0] = lv1
@@ -147,6 +147,7 @@ function createEnchantList(slot) {
   }
 }
 
+/** @arg {EnchantmentList} enchantList */
 export function randomEnchants(enchantList, lv, enchantTypes = EnchantmentTypes()) {
   const filteredTypes = filterTypes(enchantList, enchantTypes);
   const enchantType = util.getRandomValue(filteredTypes);
@@ -159,10 +160,11 @@ export function randomEnchants(enchantList, lv, enchantTypes = EnchantmentTypes(
   return enchantList;
 }
 
+/** @arg {Player} player */
 function clearEnchant(player) {
   const item = util.getHandItem(player);
   
-  const enchantment = item.getComponent('minecraft:enchantments');
+  const enchantment = item?.getComponent('minecraft:enchantments');
   if (!enchantment) {
     player.sendMessage('§c削除するエンチャントがありません');
     player.playSound(sounds.error);
@@ -177,6 +179,7 @@ function clearEnchant(player) {
   player.playSound(sounds.clear);
 }
 
+/** @arg {ItemStack} item */
 function getItemEnchants(item) {
   if (!item) return null;
   const list = item.getComponent('minecraft:enchantments')?.enchantments

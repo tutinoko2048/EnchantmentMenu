@@ -1,4 +1,4 @@
-import { MinecraftEnchantmentTypes } from '@minecraft/server';
+import { MinecraftEnchantmentTypes } from './lib/MinecraftEnchantmentTypes';
 
 export const enchantCost = {
   item: 'minecraft:lapis_lazuli',
@@ -49,7 +49,7 @@ export const enchantAddRate = {
 
 // 除外するエンチャント
 export const ignores = [
-  MinecraftEnchantmentTypes.mending.id,
-  MinecraftEnchantmentTypes.binding.id,
-  MinecraftEnchantmentTypes.vanishing.id,
+  MinecraftEnchantmentTypes.Mending,
+  MinecraftEnchantmentTypes.Binding,
+  MinecraftEnchantmentTypes.Vanishing,
 ];

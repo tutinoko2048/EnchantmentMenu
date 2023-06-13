@@ -1,11 +1,13 @@
+import { Player } from '@minecraft/server';
 import * as UI from '@minecraft/server-ui';
 
+/** @arg {Player} player */
 export async function confirmForm(player, { title = '確認', body, yes = 'OK', no = '§lキャンセル', defaultValue = false }) {
   const form = new UI.MessageFormData();
   form.title(title)
     .body(body)
-    .button1(yes)
-    .button2(no);
+    .button1(no)
+    .button2(yes);
   const { selection, canceled } = await form.show(player);
   if (canceled) return defaultValue;
   return selection === 1;
@@ -37,6 +39,7 @@ export function getRandomValue(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
+/** @arg {{ [key: number]: number }} data */
 export function lot(data) {
   const rand = Math.floor(Math.random() * 100);
   let result = 0;
@@ -44,16 +47,17 @@ export function lot(data) {
   for (const prop in data) {
     rate += data[prop]
     if (rand <= rate) {
-      result = prop;
+      result = Number(prop);
       break;
     }
   }
   return result;
 }
 
+/** @arg {Player} player */
 export function getItemAmount(player, id) {
   let count = 0;
-  const container = player.getComponent('minecraft:inventory').container; // get inventory
+  const { container } = player.getComponent('minecraft:inventory'); // get inventory
   for (let i = 0; i < container.size; i++) {
     const item = container.getItem(i);
     if (item?.typeId === id) count += item.amount;

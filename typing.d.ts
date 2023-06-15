@@ -3,8 +3,13 @@ declare module '@minecraft/server' {
   interface ItemStack {
     getComponent(componentId: 'minecraft:enchantments'): mc.ItemEnchantsComponent;
   }
+
   interface Entity {
     getComponent(componentId: 'minecraft:inventory'): mc.EntityInventoryComponent;
+  }
+
+  interface EnchantmentType {
+    readonly id: import('./scripts/EnchantMenu/lib/MinecraftEnchantmentTypes').MinecraftEnchantmentTypesUnion;
   }
 }
 

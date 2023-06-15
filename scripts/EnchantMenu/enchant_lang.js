@@ -1,4 +1,4 @@
-import { MinecraftEnchantmentTypes as Types } from './lib/MinecraftEnchantmentTypes';
+import { MinecraftEnchantmentTypes, MinecraftEnchantmentTypes as Types } from './lib/MinecraftEnchantmentTypes';
 
 export const enchantLang = {
   [Types.Power]: 'enchantment.arrowDamage',
@@ -54,6 +54,8 @@ export const enchantLevels = {
   10: 'X',
 }
 
+/** @arg {string} enchantType */
 export const getEnchantLang = (enchantType) => enchantLang[enchantType] ?? enchantType;
 
+/** @arg {number} level */
 export const getLevelLang = (level) => (1 <= level && level <= 10) ? enchantLevels[level] : level;

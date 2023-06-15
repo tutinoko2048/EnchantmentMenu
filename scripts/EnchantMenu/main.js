@@ -1,13 +1,13 @@
 // EnchantMenu v1 by RetoRuto9900K
 
-import { Enchantment, EnchantmentList, ItemStack, Player } from '@minecraft/server';
+import { EnchantmentTypes, Enchantment, EnchantmentList, ItemStack, Player } from '@minecraft/server';
 import { ActionFormData } from '@minecraft/server-ui';
 import * as util from './util';
 import { enchantCost, enchantAddRate, ignores, enchantLevelRate } from './enchant_config';
 import { getEnchantLang, getLevelLang } from './enchant_lang';
 import { MinecraftEnchantmentTypes } from './lib/MinecraftEnchantmentTypes';
 
-const EnchantmentTypes = () => Object.values(MinecraftEnchantmentTypes).filter(id => !ignores.includes(id)).slice();
+const getEnchantmentTypes = () => Object.values(MinecraftEnchantmentTypes).filter(id => !ignores.includes(id)).slice();
 const sounds = {
   enchant: 'random.anvil_use',
   clear: 'block.stonecutter.use',
@@ -130,15 +130,18 @@ export class EnchantMenu {
   /** @arg {number} lv */
   buyEnchant(lv) { // true: success, false: error
     const cost = enchantCost[lv];
-    if (this.player.level < cost.level) return this.player.sendMessage(`§cレベルが足りません ${this.player.level} < ${cost.level}`);
-    this.player.addLevels(-cost.level);
-    try {
-      this.player.runCommand(`clear @s[hasitem={item=${enchantCost.item},quantity=${cost.amount}..}] ${enchantCost.item} 0 ${cost.amount}`);
-      return true;
-    } catch {
+    if (this.player.level < cost.level) {
+     this.player.sendMessage(`§cレベルが足りません ${this.player.level} < ${cost.level}`);
+     return false;
+    }
+    const itemAmount = util.getItemAmount(this.player, enchantCost.item); // get player's lapis
+    if (itemAmount < cost.amount) {
       this.player.sendMessage(`§cアイテムが足りません (%item.dye.blue.name が ${cost.amount}個必要です)`);
       return false;
     }
+    this.player.runCommand(`clear @s[hasitem={item=${enchantCost.item},quantity=${cost.amount}..}] ${enchantCost.item} 0 ${cost.amount}`);
+    this.player.addLevels(-cost.level);
+    return true;
   }
 }
 
@@ -159,11 +162,17 @@ function createEnchantList(slot) {
  * @arg {number} lv
  * @arg {MinecraftEnchantmentTypes[]} [enchantTypes]
  */
-export function randomEnchants(enchantList, lv, enchantTypes = EnchantmentTypes()) {
+export function randomEnchants(enchantList, lv, enchantTypes = getEnchantmentTypes()) {
   const filteredTypes = filterTypes(enchantList, enchantTypes);
-  const enchantType = util.getRandomValue(filteredTypes);
+  // idをランダムに取得+Typeに変換
+  const enchantId = util.getRandomValue(filteredTypes);
+  const enchantType = enchantId && EnchantmentTypes.get(enchantId);
   if (!enchantType) return enchantList;
-  const enchant = new Enchantment(enchantType, getEnchantLevel(enchantType.maxLevel, lv));
+
+  const enchant = new Enchantment(
+    enchantType,
+    getEnchantLevel(enchantType.maxLevel, lv)
+  );
   enchantList.addEnchantment(enchant);
   
   // 確率でエンチャを追加
